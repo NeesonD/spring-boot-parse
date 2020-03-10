@@ -1,0 +1,7 @@
+# Environment Post Processors
+org.springframework.boot.env.EnvironmentPostProcessor=\
+com.neeson.springbootparse.config.CustomEnvironmentPostProcessor
+
+
+org.springframework.boot.env.PropertySourceLoader=\
+com.neeson.springbootparse.env.FuckPropertySourceLoader

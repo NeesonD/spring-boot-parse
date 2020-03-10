@@ -9,7 +9,7 @@ public class CustomPropertySource extends PropertySource<CustomKeyValue> {
 
     private static final String CUSTOM_PROPERTY_SOURCE = "CUSTOM_PROPERTY_SOURCE";
 
-    public CustomPropertySource(String name, CustomKeyValue source) {
+    public CustomPropertySource(CustomKeyValue source) {
         super(CUSTOM_PROPERTY_SOURCE, source);
     }
 
