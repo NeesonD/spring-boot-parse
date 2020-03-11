@@ -6,4 +6,6 @@ public interface EnvConstant {
 
     String PORT = "port";
 
+    String LOG_PRE = "=======>";
+
 }

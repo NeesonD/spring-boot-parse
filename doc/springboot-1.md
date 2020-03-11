@@ -39,7 +39,40 @@ SpringApplication 是项目启动的入口，所以从这个类开始分析。�
 平常开发的时候，我们构建 SpringApplication，里面的组合对象都是默认的。但是只要是组合对象，并且有暴露 set 方法，就可以将默认组件
 替换成自定义组件。比如说用 CustomBeanNameGenerator 代替 DefaultBeanNameGenerator，那就可以在不同的包里面使用相同类名的 bean 了。
 
-这里可以引出第一个扩展点设计：**接口 + 组合**
+这里可以引出第一个扩展点设计：**接口 + 组合 + builder模式**
+
+一个复杂对象的初始化，往往包含必须的组件和非必须的组件，非必须的组件通过 set 来设置，必须的组件则在构造器里面初始化
+
+[](./springApplication.png)
+
+从构造器中主要关注里面的扩展点，通过自定义 spring.factories，我们可以加入自己想要的 Listener 和 Initializer，当然
+也可以通过 SpringApplicationBuilder 设置。除了关注扩展点之外，我们可以看到这里有可以复用的方法 getSpringFactoriesInstances
+这个方法主要通过反射来完成的，平时开发中也可以借鉴这种写法
+
+SpringApplication 构造完成之后，通过 run 方法就可以启动项目。我们先来看一下这个 run 方法中的几个关键点
+
+[](./springboot-core.png)
+
+这里面主要分成三个体系：事件体系、env 体系、context 体系
+
+**事件体系的重点**：给开发者提供强大的扩展功能
+
+* 观察者模式
+* 扩展点设计2：流程 + 事件 + 组合
+* @EventListener 和 @TransactionalEventListener(ThreadLocal的运用)以及实现一个自定义的 @CustomEventListener 
+
+
+**env体系重点**：保存各种 key-value 对，可以接入配置中心
+
+* Resource 和 ResourceLoader
+* PropertySource 和 PropertyResolver 以及 Profile
+
+**context体系**：Spring 的核心
+
+* IOC 容器
+* AOP 框架
+* BeanFactoryPostProcessor 的扩展能力
+* BeanPostProcessor 的扩展能力
 
 
 

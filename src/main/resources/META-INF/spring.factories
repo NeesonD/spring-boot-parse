@@ -5,3 +5,7 @@ com.neeson.springbootparse.config.CustomEnvironmentPostProcessor
 
 org.springframework.boot.env.PropertySourceLoader=\
 com.neeson.springbootparse.env.FuckPropertySourceLoader
+
+
+org.springframework.context.ApplicationListener=\
+com.neeson.springbootparse.listener.FactoryApplicationListener
