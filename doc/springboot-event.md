@@ -33,6 +33,7 @@ public interface ApplicationEventMulticaster {
 3. 事件的发射是不是可以配置成异步或者同步的
 4. 监听者之前是否有序，如果有序，那后面的监听者是否可以拿到前面监听者中的信息
 5. 监听者是否可以并行处理
+6. 推拉模型的设计
 
 带着上面几个问题，我们来看一下 ApplicationEventMulticaster 实现类是如何处理的
 
@@ -43,42 +44,23 @@ CustomApplicationEventMulticaster
 
 ```java
 public abstract class AbstractApplicationEventMulticaster implements ApplicationEventMulticaster, BeanClassLoaderAware, BeanFactoryAware {
+
+    // 一个大篮子，所有的监听者都会加到这个里面
     private final AbstractApplicationEventMulticaster.ListenerRetriever defaultRetriever = new AbstractApplicationEventMulticaster.ListenerRetriever(false);
+    // 很多小篮子，以 Event 为 key，Listeners 为 value。起到缓存作用
     final Map<AbstractApplicationEventMulticaster.ListenerCacheKey, AbstractApplicationEventMulticaster.ListenerRetriever> retrieverCache = new ConcurrentHashMap(64);
     @Nullable
     private ClassLoader beanClassLoader;
+    // 通过结合 beanFactory，可以通过 bean 的类型或者 beanName 来添加 Listener
     @Nullable
     private ConfigurableBeanFactory beanFactory;
+    // 锁对象
     private Object retrievalMutex;
 
     public AbstractApplicationEventMulticaster() {
         this.retrievalMutex = this.defaultRetriever;
     }
 
-    public void setBeanClassLoader(ClassLoader classLoader) {
-        this.beanClassLoader = classLoader;
-    }
-
-    public void setBeanFactory(BeanFactory beanFactory) {
-        if (!(beanFactory instanceof ConfigurableBeanFactory)) {
-            throw new IllegalStateException("Not running in a ConfigurableBeanFactory: " + beanFactory);
-        } else {
-            this.beanFactory = (ConfigurableBeanFactory)beanFactory;
-            if (this.beanClassLoader == null) {
-                this.beanClassLoader = this.beanFactory.getBeanClassLoader();
-            }
-
-            this.retrievalMutex = this.beanFactory.getSingletonMutex();
-        }
-    }
-
-    private ConfigurableBeanFactory getBeanFactory() {
-        if (this.beanFactory == null) {
-            throw new IllegalStateException("ApplicationEventMulticaster cannot retrieve listener beans because it is not associated with a BeanFactory");
-        } else {
-            return this.beanFactory;
-        }
-    }
     
     // 1. 这里设计了一个内部类 ListenerRetriever 来hold applicationListeners
     public void addApplicationListener(ApplicationListener<?> listener) {
@@ -91,41 +73,6 @@ public abstract class AbstractApplicationEventMulticaster implements Application
             // 那我就要遍历所有的 applicationListeners，这样性能是很差的
             this.defaultRetriever.applicationListeners.add(listener);
             this.retrieverCache.clear();
-        }
-    }
-
-    public void addApplicationListenerBean(String listenerBeanName) {
-        synchronized(this.retrievalMutex) {
-            this.defaultRetriever.applicationListenerBeans.add(listenerBeanName);
-            this.retrieverCache.clear();
-        }
-    }
-
-    public void removeApplicationListener(ApplicationListener<?> listener) {
-        synchronized(this.retrievalMutex) {
-            this.defaultRetriever.applicationListeners.remove(listener);
-            this.retrieverCache.clear();
-        }
-    }
-
-    public void removeApplicationListenerBean(String listenerBeanName) {
-        synchronized(this.retrievalMutex) {
-            this.defaultRetriever.applicationListenerBeans.remove(listenerBeanName);
-            this.retrieverCache.clear();
-        }
-    }
-
-    public void removeAllListeners() {
-        synchronized(this.retrievalMutex) {
-            this.defaultRetriever.applicationListeners.clear();
-            this.defaultRetriever.applicationListenerBeans.clear();
-            this.retrieverCache.clear();
-        }
-    }
-
-    protected Collection<ApplicationListener<?>> getApplicationListeners() {
-        synchronized(this.retrievalMutex) {
-            return this.defaultRetriever.getApplicationListeners();
         }
     }
 

@@ -43,7 +43,7 @@ SpringApplication 是项目启动的入口，所以从这个类开始分析。�
 
 一个复杂对象的初始化，往往包含必须的组件和非必须的组件，非必须的组件通过 set 来设置，必须的组件则在构造器里面初始化
 
-[](./springApplication.png)
+![SpringApplication](./springApplication.png)
 
 从构造器中主要关注里面的扩展点，通过自定义 spring.factories，我们可以加入自己想要的 Listener 和 Initializer，当然
 也可以通过 SpringApplicationBuilder 设置。除了关注扩展点之外，我们可以看到这里有可以复用的方法 getSpringFactoriesInstances
@@ -51,7 +51,7 @@ SpringApplication 是项目启动的入口，所以从这个类开始分析。�
 
 SpringApplication 构造完成之后，通过 run 方法就可以启动项目。我们先来看一下这个 run 方法中的几个关键点
 
-[](./springboot-core.png)
+![SpringApplication.run](./springboot-core.png)
 
 这里面主要分成三个体系：事件体系、env 体系、context 体系
 
