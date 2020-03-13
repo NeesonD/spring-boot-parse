@@ -12,15 +12,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 
-/**
- * Create on 2020-03-12
- * Copyright (c) 2020 by XueBang Information Technology Co.Ltd.
- * All Rights Reserved, Designed By XueBangSoft
- * Copyright:  Copyright(C) 2014-2020
- * Company:    XueBang Information Technology Co.Ltd.
- *
- * @author Administrator
- */
+
 public class CustomApplicationEventMulticaster extends SimpleApplicationEventMulticaster {
 
     BlockingQueue blockingQueue = new LinkedBlockingQueue();

@@ -13,7 +13,7 @@ public class CustomApplicationListener implements ApplicationListener, Ordered {
 
     @Override
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
-        log.error(LOG_PRE +this.getClass().getSimpleName() + applicationEvent.getClass().getName());
+//        log.error(LOG_PRE +this.getClass().getSimpleName() + applicationEvent.getClass().getName());
     }
 
     @Override

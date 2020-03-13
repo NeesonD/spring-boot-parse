@@ -11,7 +11,7 @@ import static com.neeson.springbootparse.constant.EnvConstant.LOG_PRE;
 public class FactoryApplicationListener implements ApplicationListener, Ordered {
     @Override
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
-        log.error(LOG_PRE + this.getClass().getSimpleName() + applicationEvent.getClass().getName());
+//        log.error(LOG_PRE + this.getClass().getSimpleName() + applicationEvent.getClass().getName());
     }
 
     @Override
